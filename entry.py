@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from load_mnist import MNISTDataset
+from load_mnist import get_dataloader
 from models import SimpleMLP, SimpleCNN, SimpleVIT
 
 def parse_args():
@@ -196,7 +196,7 @@ def main(args):
         x = next(iter(train_dataloader))
         for model in MODELS:
             args.exp = str(model.__name__)
-            visualize(model(), x=x, args)
+            visualize(model(), x, args)
         exit()
 
     # Train Models
