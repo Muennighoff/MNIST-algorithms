@@ -22,12 +22,12 @@ def parse_args():
     parser.add_argument("--exp", type=str, default="exp", help="Experiment Name for naming of sub files")
     parser.add_argument("--visualize", action='store_const', default=False, const=True, help="Generate Graphs of all models with torchviz")
 
-    parser.add_argument("--configure", action='store_const', default=False, const=True, help="Configure own presets (by default reproduces lab report table)")
     parser.add_argument("--model", type=str, default="CNN", help="One of MLP, CNN, VIT")
     parser.add_argument("--dropout_proba", type=float, default="0.1", help="Dropout probability to use")
     parser.add_argument("--split", type=int, default=0.9, help="Train/Val percentage split")
     parser.add_argument("--seed", type=int, default=42, help="Reproducibility Seed for Numpy & Torch")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch Size to use for Training")
+    parser.add_argument("--n_epochs", type=int, default=15, help="Epochs to train for")
     parser.add_argument("--init_func", type=str, default="normal", help="Weight init function - One of [normal, xavier, kaiming]")
 
     args = parser.parse_args()
@@ -57,7 +57,7 @@ def get_model(args):
     elif args.init_func == "uniform":
         model.apply(lambda x: init_weights(x,init_func=nn.init.uniform_, a=0.0, b=1.0))
     elif args.init_func == "zeros":
-        model.apply(lambda x: init_weights(x,init_func=nn.init.zeros_, a=0.0, b=1.0))
+        model.apply(lambda x: init_weights(x,init_func=nn.init.zeros_))
     elif args.init_func == "xavier":
         model.apply(lambda x: init_weights(x, init_func=nn.init.xavier_normal_))
 
@@ -89,10 +89,9 @@ def train_val(train_dataloader, val_dataloader, args):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
-    n_epochs = 20
     val_loss_min = np.Inf
 
-    for epoch in range(1, n_epochs+1):
+    for epoch in range(1, args.n_epochs+1):
         # Keep track of train & val loss & accuracy
         train_loss = 0.0
         val_loss = 0.0
@@ -204,15 +203,10 @@ def main(args):
         for model in MODELS.values():
             args.exp = str(model.__name__)
             visualize(model(), x, args)
-        exit()
-
-    # Train Models
-    if args.configure:
+    else:
         train_val(train_dataloader, val_dataloader, args)
         predict(test_dataloader, args)
-    # Reproduce table
-    else:
-        pass
+
 
 if __name__ == "__main__":
     args = parse_args()
