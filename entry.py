@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument("--split", type=int, default=0.9, help="Train/Val percentage split")
     parser.add_argument("--seed", type=int, default=42, help="Reproducibility Seed for Numpy & Torch")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch Size to use for Training")
-    parser.add_argument("--init_func", type=str, default="normal", const=True, help="Weight init function - One of [normal, xavier, kaiming]")
+    parser.add_argument("--init_func", type=str, default="normal", help="Weight init function - One of [normal, xavier, kaiming]")
 
     args = parser.parse_args()
     return args
