@@ -24,10 +24,8 @@ class SimpleMLP(nn.Module):
         self.fc4 = nn.Linear(28*28//8, 10)
         
         self.dropout = nn.Dropout(p=dropout_proba)
-        
     
     def forward(self, x):
-        
         x = x.view(x.shape[0], -1) # BSx784
         
         x = F.relu(self.fc1(x))
@@ -60,7 +58,6 @@ class SimpleCNN(nn.Module):
         
         self.dropout = nn.Dropout(p=dropout_proba)
         
-    
     def forward(self, x):
         x = x.reshape((x.shape[0], x.shape[-1], x.shape[1], x.shape[2])) # > BSx1x28x28 
         
@@ -130,15 +127,16 @@ class SelfAttention(nn.Module):
     
 # Much simplified version of https://openreview.net/pdf?id=YicbFdNTTy
 class SimpleVIT(nn.Module):
-    def __init__(self, dim=28*28, inner_dim=28*28):
+    def __init__(self, dim=28*28, inner_dim=28*28, dropout_proba=0.1):
         super(SimpleVIT, self).__init__()
 
-        # This is quite different from normal transformers but a try at capturing 2D information, since Attention is position invariant
-        self.pos_embedding_w = nn.Parameter(torch.randn(1, int(dim**1/2), 1, 1))
-        self.pos_embedding_h = nn.Parameter(torch.randn(1, 1, int(dim**1/2), 1))
+        # This is quite different from normal transformers but a try at capturing 2D information
+        # Since attention is position invariant, we need to somehow encode the position of pixels
+        self.pos_embedding_w = nn.Parameter(torch.randn(1, int(dim**(1/2)), 1, 1))
+        self.pos_embedding_h = nn.Parameter(torch.randn(1, 1, int(dim**(1/2)), 1))
 
         # Default from https://github.com/google-research/vision_transformer/blob/master/vit_jax/models.py
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(dropout_proba)
         
         self.norm = nn.LayerNorm(dim)
         

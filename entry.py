@@ -24,6 +24,7 @@ def parse_args():
 
     parser.add_argument("--configure", action='store_const', default=False, const=True, help="Configure own presets (by default reproduces lab report table)")
     parser.add_argument("--model", type=str, default="CNN", help="One of MLP, CNN, VIT")
+    parser.add_argument("--dropout_proba", type=float, default="0.1", help="Dropout probability to use")
     parser.add_argument("--split", type=int, default=0.9, help="Train/Val percentage split")
     parser.add_argument("--seed", type=int, default=42, help="Reproducibility Seed for Numpy & Torch")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch Size to use for Training")
@@ -48,7 +49,7 @@ def get_model(args):
     def count_parameters(model):
         return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-    model = MODELS[args.model]()
+    model = MODELS[args.model](dropout_proba=args.dropout_proba)
 
     # Initilization
     if args.init_func == "normal":
@@ -67,14 +68,19 @@ def get_model(args):
     
 
 def visualize(model, x, args):
+    """
+    Create graph of model
+    """
     import torchviz
-    dot = torchviz.make_dot(model(x), params=dict(model.named_parameters())).render()
+    dot = torchviz.make_dot(model(x), params=dict(model.named_parameters()))
     dot.format = 'png'
     dot.render(os.path.join(args.out, args.exp))
 
 
 def train_val(train_dataloader, val_dataloader, args):
-
+    """
+    Perform training & validation
+    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = get_model(args)
@@ -156,7 +162,9 @@ def train_val(train_dataloader, val_dataloader, args):
 
 
 def predict(test_dataloader, args):
-
+    """
+    Perform training & validation
+    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = MODELS[args.model]()
@@ -185,7 +193,6 @@ def predict(test_dataloader, args):
 
 
 def main(args):
-
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
