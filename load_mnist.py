@@ -35,13 +35,13 @@ def get_dataloader(args):
     df = pd.read_csv(args.train)
     df = df.sample(frac=1, random_state=args.seed)
 
-    train_dataset = MNISTDataset(df[:int(split*len(df))])
-    val_dataset = MNISTDataset(df[int(split*len(df)):])
+    train_dataset = MNISTDataset(df[:int(args.split*len(df))])
+    val_dataset = MNISTDataset(df[int(args.split*len(df)):])
 
     train_dataset.visualize()
 
-    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
 
     df_test = pd.read_csv(args.test)
     df_test["label"] = 0 # Create dummy labels, which won't be used
