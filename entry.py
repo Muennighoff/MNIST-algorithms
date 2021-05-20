@@ -54,9 +54,9 @@ def get_model(args):
     if args.init_func == "normal":
         model.apply(lambda x: init_weights(x, init_func=nn.init.normal_, std=0.02)) # Default transformer std
     elif args.init_func == "uniform":
-        model.apply(lambda x: init_weights(x,init_func=nn.init.uniform_, a=0.0, b=1.0)
+        model.apply(lambda x: init_weights(x,init_func=nn.init.uniform_, a=0.0, b=1.0))
     elif args.init_func == "zeros":
-        model.apply(lambda x: init_weights(x,init_func=nn.init.zeros_, a=0.0, b=1.0)
+        model.apply(lambda x: init_weights(x,init_func=nn.init.zeros_, a=0.0, b=1.0))
     elif args.init_func == "xavier":
         model.apply(lambda x: init_weights(x, init_func=nn.init.xavier_normal_))
 
@@ -66,7 +66,7 @@ def get_model(args):
     return model
     
 
-def visualize(args, model, x):
+def visualize(model, x, args):
     import torchviz
     dot = torchviz.make_dot(model(x), params=dict(model.named_parameters())).render()
     dot.format = 'png'
@@ -83,7 +83,7 @@ def train_val(train_dataloader, val_dataloader, args):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
-    n_epochs = 30
+    n_epochs = 20
     val_loss_min = np.Inf
 
     for epoch in range(1, n_epochs+1):
@@ -183,6 +183,7 @@ def predict(test_dataloader, args):
     print("Submission Head:\n", sample_sub.head(5))
     sample_sub.to_csv(os.path.join(args.out, args.exp), index=False)
 
+
 def main(args):
 
     torch.manual_seed(args.seed)
@@ -195,15 +196,16 @@ def main(args):
         x = next(iter(train_dataloader))
         for model in MODELS:
             args.exp = str(model.__name__)
-            visualize(args, model(), x=x)
+            visualize(model(), x=x, args)
         exit()
 
-    # Train Models!
+    # Train Models
     if args.configure:
-        pass
+        train_val(train_dataloader, val_dataloader, args)
+        predict(test_dataloader, args)
     # Reproduce table
     else:
-
+        pass
 
 if __name__ == "__main__":
     args = parse_args()
