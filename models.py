@@ -42,7 +42,7 @@ class SimpleMLP(nn.Module):
 
 class SimpleCNN(nn.Module):
     """
-    Simple CNN - To improve, could BatchNorm2d & more dropouts
+    Simple CNN - To improve, could add BatchNorm2d & more dropouts
     """
     def __init__(self, dropout_proba=0.1):
         super(SimpleCNN, self).__init__()
