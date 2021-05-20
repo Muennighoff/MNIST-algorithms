@@ -194,7 +194,7 @@ def main(args):
     # Get Graphs of models & exit
     if args.visualize:
         x = next(iter(train_dataloader))
-        for model in MODELS:
+        for model in MODELS.values():
             args.exp = str(model.__name__)
             visualize(model(), x, args)
         exit()
