@@ -51,7 +51,7 @@ def get_model(args):
 
     model = MODELS[args.model](dropout_proba=args.dropout_proba)
 
-    # Initilization
+    # Weight Initilization
     if args.init_func == "normal":
         model.apply(lambda x: init_weights(x, init_func=nn.init.normal_, std=0.02)) # Default transformer std
     elif args.init_func == "uniform":
@@ -93,15 +93,13 @@ def train_val(train_dataloader, val_dataloader, args):
 
     for epoch in range(1, args.n_epochs+1):
         # Keep track of train & val loss & accuracy
-        train_loss = 0.0
-        val_loss = 0.0
-        
-        train_correct = []
-        val_correct = []
+        train_loss, val_loss = 0.0, 0.0
+        train_correct, val_correct = [], []
         
         ###################
         # Train the model #
         ###################
+        # Activate Dropout & Co
         model.train()
         for data, target in train_dataloader:
             # Move tensors to correct device (GPU if Cuda available)
@@ -110,48 +108,49 @@ def train_val(train_dataloader, val_dataloader, args):
             optimizer.zero_grad()
             # forward pass: compute predicted outputs by passing inputs to the model
             output = model(data)
-            # calculate the batch loss & squeeze target to get correct shape
+            # Calculate the batch loss & squeeze target to get correct shape
             loss = criterion(output, target.squeeze())
-            # backward pass: compute gradient of the loss with respect to model parameters
+            # Backward pass: compute gradient of the loss with respect to model parameters
             loss.backward()
-            # perform a single optimization step (parameter update)
+            # Perform a single optimization step
             optimizer.step()
-            # update correct & training loss
+            # Update correct & training loss
             _, pred = torch.max(output, 1)
             train_correct.extend((target.squeeze() == pred).detach().tolist())
             train_loss += loss.item()*data.size(0)
             
         ######################    
-        # validate the model #
+        # Validate the model #
         ######################
+        # Deactivate Dropout & Co
         model.eval()
         for data, target in val_dataloader:
             # Deactivate autograd
             with torch.no_grad():
-                # move tensors to GPU if CUDA is available
+                # Move tensors to correct device (GPU if Cuda available)
                 data, target = data.to(device), target.to(device)
-                # forward pass: compute predicted outputs by passing inputs to the model
+                # Forward pass: compute predicted outputs by passing inputs to the model
                 output = model(data)
-                # calculate the batch loss
+                # Calculate the batch loss
                 loss = criterion(output, target.squeeze())
-                # update correct & validation loss 
+                # Update correct & validation loss 
                 _, pred = torch.max(output, 1)
                 val_correct.extend((target.squeeze() == pred).tolist())
                 val_loss += loss.item()*data.size(0)
                     
-        # calculate average losses
+        # Calculate average losses
         train_loss = train_loss/len(train_dataloader.dataset)
         val_loss = val_loss/len(val_dataloader.dataset)
         
-        # calculate accuracy
+        # Calculate accuracy
         train_acc = sum(train_correct) / len(train_correct)
         val_acc = sum(val_correct) / len(val_correct)
             
-        # print training/validation statistics 
+        # Print training/validation statistics 
         print('Epoch: {} \tTrain Loss: {:.6f} \tTrain Accuracy: {:.6f} \tVal Loss: {:.6f} \tVal Accuracy: {:.6f}'.format(
             epoch, train_loss, train_acc, val_loss, val_acc))
         
-        # save model if validation loss has decreased, i.e. early stopping
+        # Save model if validation loss has decreased, i.e. early stopping
         if val_loss <= val_loss_min:
             print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
             val_loss_min,
@@ -167,20 +166,20 @@ def predict(test_dataloader, args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = MODELS[args.model]()
-    model.load_state_dict(torch.load(os.path.join(args.out, 'model_mnist.pt')))
+    model.load_state_dict(torch.load(os.path.join(args.out, 'model_{}.pt'.format(args.exp))))
     model.to(device)
 
     model.eval()
     preds = []
 
-    # iterate over test data
+    # Iterate over test data
     with torch.no_grad():
         for data, _ in test_dataloader:
-            # move tensors to GPU if CUDA is available
+            # Move tensors to correct device (GPU if Cuda available)
             data, target = data.to(device), target.to(device)
-            # forward pass: compute predicted outputs by passing inputs to the model
+            # Forward pass: compute predicted outputs by passing inputs to the model
             output = model(data)
-            # convert output probabilities to predicted class
+            # Convert output probabilities to predicted class
             _, pred = torch.max(output, 1)
             # Add to preds
             preds.extend(pred.cpu().tolist())
@@ -190,19 +189,19 @@ def predict(test_dataloader, args):
     print("Submission Head:\n", sample_sub.head(5))
     sample_sub.to_csv(os.path.join(args.out, args.exp), index=False)
 
-
 def main(args):
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
     train_dataloader, val_dataloader, test_dataloader = get_dataloader(args)
 
-    # Get Graphs of models & exit
+    # Get Graphs of models
     if args.visualize:
         x = next(iter(train_dataloader))
         for model in MODELS.values():
             args.exp = str(model.__name__)
             visualize(model(), x, args)
+    # Train, Validate, Test
     else:
         train_val(train_dataloader, val_dataloader, args)
         predict(test_dataloader, args)

@@ -1,2 +1,5 @@
 # MNIST-algorithms
-Comparing simple deep learning models on MNIST - CNN, MLP, VIT
+
+重现pdf中的表：
+
+`bash table.sh`
