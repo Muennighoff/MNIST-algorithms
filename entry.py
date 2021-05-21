@@ -24,13 +24,13 @@ def parse_args():
 
     parser.add_argument("--model", type=str, default="CNN", help="One of MLP, CNN, VIT")
     parser.add_argument("--dropout_proba", type=float, default="0.1", help="Dropout probability to use")
-    parser.add_argument("--split", type=int, default=0.9, help="Train/Val percentage split")
+    parser.add_argument("--split", type=float, default=0.9, help="Train/Val percentage split")
     parser.add_argument("--seed", type=int, default=42, help="Reproducibility Seed for Numpy & Torch")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch Size to use for Training")
     parser.add_argument("--n_epochs", type=int, default=15, help="Epochs to train for")
     parser.add_argument("--init_func", type=str, default="normal", help="Weight init function - One of [normal, uniform, zeros, xavier, kaiming]")
-    parser.add_argument("--uniform_low", type=int, default="-0.1", help="Minimum value to sample from for uniform init")
-    parser.add_argument("--uniform_high", type=int, default="0.1", help="Maximum value to sample from for uniform init")
+    parser.add_argument("--uniform_low", type=float, default="-0.1", help="Minimum value to sample from for uniform init")
+    parser.add_argument("--uniform_high", type=float, default="0.1", help="Maximum value to sample from for uniform init")
 
     args = parser.parse_args()
     return args
