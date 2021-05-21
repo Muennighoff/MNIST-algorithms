@@ -32,3 +32,15 @@ python entry.py --model MLP --dropout_proba 0.1 --exp CNN-Dropout
 
 echo "第六： VIT-Dropout"
 python entry.py --model MLP --dropout_proba 0.1 --exp VIT-Dropout
+
+
+########################
+
+echo "第四： MLP-Dropout"
+python entry.py --model MLP --dropout_proba 0.1 --exp MLP-Dropout
+
+echo "第五： CNN-Dropout"
+python entry.py --model MLP --dropout_proba 0.1 --exp CNN-Dropout
+
+echo "第六： VIT-Dropout"
+python entry.py --model MLP --dropout_proba 0.1 --exp VIT-Dropout

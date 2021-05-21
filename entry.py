@@ -1,5 +1,6 @@
 import os
 import argparse
+import time
 
 import pandas as pd
 import numpy as np
@@ -182,7 +183,7 @@ def predict(test_dataloader, args):
     with torch.no_grad():
         for data, _ in test_dataloader:
             # Move tensors to correct device (GPU if Cuda available)
-            data, target = data.to(device), target.to(device)
+            data = data.to(device)
             # Forward pass: compute predicted outputs by passing inputs to the model
             output = model(data)
             # Convert output probabilities to predicted class
