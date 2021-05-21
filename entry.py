@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--train", type=str, default="./data/train.csv", help="Path to Train File.")
-    parser.add_argument("--test", type=str, default="./data/train.csv", help="Path to Test File")
+    parser.add_argument("--test", type=str, default="./data/test.csv", help="Path to Test File")
     parser.add_argument("--sample_sub", type=str, default="./data/sample_submission.csv", help="Path to Sample Submission")
     parser.add_argument("--out", type=str, default="./out/", help="Path to output models & predictions")
     parser.add_argument("--exp", type=str, default="exp", help="Experiment Name for naming of sub files")
