@@ -27,6 +27,7 @@ def parse_args():
     parser.add_argument("--split", type=float, default=0.9, help="Train/Val percentage split")
     parser.add_argument("--seed", type=int, default=42, help="Reproducibility Seed for Numpy & Torch")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch Size to use for Training")
+    parser.add_argument("--lr", type=float, default=1e-4, help="Learning Rate for Training")
     parser.add_argument("--n_epochs", type=int, default=15, help="Epochs to train for")
     parser.add_argument("--init_func", type=str, default="normal", help="Weight init function - One of [normal, uniform, zeros, xavier, kaiming]")
     parser.add_argument("--uniform_low", type=float, default="-0.1", help="Minimum value to sample from for uniform init")
@@ -93,7 +94,7 @@ def train_val(train_dataloader, val_dataloader, args):
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     val_loss_min = np.Inf
 
@@ -173,7 +174,7 @@ def predict(test_dataloader, args):
 
     model = MODELS[args.model]()
     model.load_state_dict(torch.load(os.path.join(args.out, 'model_{}.pt'.format(args.exp))))
-    model.to(device)
+    model = model.to(device)
 
     model.eval()
     preds = []
