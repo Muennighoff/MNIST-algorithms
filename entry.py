@@ -1,6 +1,5 @@
 import os
 import argparse
-import time
 
 import pandas as pd
 import numpy as np
@@ -194,7 +193,7 @@ def predict(test_dataloader, args):
     sample_sub = pd.read_csv(args.sample_sub)
     sample_sub["Label"] = preds
     print("Submission Head:\n", sample_sub.head(5))
-    sample_sub.to_csv(os.path.join(args.out, args.exp), index=False)
+    sample_sub.to_csv(os.path.join(args.out, args.exp + ".csv"), index=False)
 
 def main(args):
     torch.manual_seed(args.seed)
