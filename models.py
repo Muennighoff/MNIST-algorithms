@@ -67,6 +67,7 @@ class SimpleCNN(nn.Module):
         
         # Reshape & FCs
         x = x.view(-1, 4*4*64)
+        x = self.dropout(x)
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
         x = self.fc2(x)
