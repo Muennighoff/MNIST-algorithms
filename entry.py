@@ -28,7 +28,9 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=42, help="Reproducibility Seed for Numpy & Torch")
     parser.add_argument("--batch_size", type=int, default=64, help="Batch Size to use for Training")
     parser.add_argument("--n_epochs", type=int, default=15, help="Epochs to train for")
-    parser.add_argument("--init_func", type=str, default="normal", help="Weight init function - One of [normal, xavier, kaiming]")
+    parser.add_argument("--init_func", type=str, default="normal", help="Weight init function - One of [normal, uniform, zeros, xavier, kaiming]")
+    parser.add_argument("--uniform_low", type=int, default="-0.1", help="Minimum value to sample from for uniform init")
+    parser.add_argument("--uniform_high", type=int, default="0.1", help="Maximum value to sample from for uniform init")
 
     args = parser.parse_args()
     return args
@@ -55,11 +57,15 @@ def get_model(args):
     if args.init_func == "normal":
         model.apply(lambda x: init_weights(x, init_func=nn.init.normal_, std=0.02)) # Default transformer std
     elif args.init_func == "uniform":
-        model.apply(lambda x: init_weights(x,init_func=nn.init.uniform_, a=0.0, b=1.0))
+        model.apply(lambda x: init_weights(x,init_func=nn.init.uniform_, a=args.uniform_low, b=args.uniform_high))
     elif args.init_func == "zeros":
         model.apply(lambda x: init_weights(x,init_func=nn.init.zeros_))
     elif args.init_func == "xavier":
         model.apply(lambda x: init_weights(x, init_func=nn.init.xavier_normal_))
+    elif args.init_func == "kaiming":
+        model.apply(lambda x: init_weights(x, init_func=nn.init.kaiming_normal_, nonlinearity='relu'))
+    else:
+        raise NotImplementedError
 
     # Statistics
     print("Parameters in Model: ", count_parameters(model))
