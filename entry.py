@@ -39,6 +39,7 @@ def parse_args():
 MODELS = {"MLP": SimpleMLP, "CNN": SimpleCNN, "VIT": SimpleVIT}
 
 def get_model(args):
+    """Create model"""
     def init_weights(module, init_range=0.02, init_func=nn.init.normal_, **kwargs):
         """Initialize model weights"""
         if isinstance(module, (nn.Linear, nn.Conv2d)):

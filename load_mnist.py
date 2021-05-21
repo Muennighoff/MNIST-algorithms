@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader   
 
 class MNISTDataset(Dataset):
+    """MNIST Dataset Wrapper"""
     def __init__(self, df, transform=None):
         
         self.labels = df[["label"]].values
@@ -31,6 +32,7 @@ class MNISTDataset(Dataset):
                 
 
 def get_dataloader(args):
+    """Return train,val,test dataloders"""
     # Read data
     df = pd.read_csv(args.train)
     df = df.sample(frac=1, random_state=args.seed)

@@ -43,6 +43,8 @@ class SimpleMLP(nn.Module):
 class SimpleCNN(nn.Module):
     """
     Simple CNN - To improve, could add BatchNorm2d & more dropouts
+
+    Default Params: 274882
     """
     def __init__(self, dropout_proba=0.1):
         super(SimpleCNN, self).__init__()
@@ -128,6 +130,11 @@ class SelfAttention(nn.Module):
     
 # Much simplified version of https://openreview.net/pdf?id=YicbFdNTTy
 class SimpleVIT(nn.Module):
+    """
+    Simplified Version of the Vision Transformer with only one transformer layer
+
+    Default Params: 4314418
+    """
     def __init__(self, dim=28*28, inner_dim=28*28, dropout_proba=0.1):
         super(SimpleVIT, self).__init__()
 
@@ -143,7 +150,7 @@ class SimpleVIT(nn.Module):
         
         self.attention = SelfAttention(dim, inner_dim)
   
-        # Simple MLP after Transformer; Original also scales dim up & down here
+        # Simple MLP after Transformer; Use GELU activation as slightly outperforms RELU due to smoother rounding at 0
         self.mlp = nn.Sequential(
             nn.Linear(dim, dim*2),
             nn.GELU(),
@@ -167,6 +174,8 @@ class SimpleVIT(nn.Module):
         bs, h, w, c = x.shape # BS, Height, Width, Channels
         x += self.pos_embedding_h + self.pos_embedding_w
         x = x.reshape((bs, h*w))
+
+        # For bigger images than MNIST, make h*w smaller here via e.g. patches
         
         # Transformer incl. attention
         x = self.transformer(x)
