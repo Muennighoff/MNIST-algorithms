@@ -140,6 +140,9 @@ class SimpleVIT(nn.Module):
 
         # This is quite different from normal transformers but a try at capturing 2D information
         # Since attention is position invariant, we need to somehow encode the position of pixels
+        # Note that these embeddings are only for the first row & column of the data
+        # TO get positional embeddings for each pixel it should be int(dim**(1/2)), int(dim**(1/2)) instead
+        # However I somehow got better results with the one below on this specific task
         self.pos_embedding_w = nn.Parameter(torch.randn(1, int(dim**(1/2)), 1, 1))
         self.pos_embedding_h = nn.Parameter(torch.randn(1, 1, int(dim**(1/2)), 1))
 
