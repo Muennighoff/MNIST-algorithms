@@ -28,7 +28,7 @@ class MNISTDataset(Dataset):
     def visualize(self, idx=0):
         print("Label: {}\n".format(self.labels[idx]))
         plt.imshow(self.imgs[idx,:,:], cmap='gray', vmin=0, vmax=255, interpolation='none')
-        plt.show() 
+        plt.show()
                 
 
 def get_dataloader(args):

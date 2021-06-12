@@ -76,3 +76,8 @@ python entry.py --model CNN --dropout_proba 0.1 --init_func xavier --exp CNN-Dro
 
 echo "第二十一： VIT-Dropout-Xavier"
 python entry.py --model VIT --dropout_proba 0.1 --init_func xavier --exp VIT-Dropout-Xavier
+
+########################
+
+echo "第二十二：CNN-Dropout-BatchNorm"
+python entry.py --model CNN2 --dropout_proba 0.1 --exp CNN-Dropout-BatchNorm

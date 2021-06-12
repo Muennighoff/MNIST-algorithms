@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from load_mnist import get_dataloader
-from models import SimpleMLP, SimpleCNN, SimpleVIT
+from models import SimpleMLP, SimpleCNN, SimpleVIT, BetterCNN
 
 def parse_args():
     # Parse command line arguments
@@ -36,7 +36,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-MODELS = {"MLP": SimpleMLP, "CNN": SimpleCNN, "VIT": SimpleVIT}
+MODELS = {"MLP": SimpleMLP, "CNN": SimpleCNN, "VIT": SimpleVIT, "CNN2": BetterCNN}
 
 def get_model(args):
     """Create model"""

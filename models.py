@@ -76,6 +76,49 @@ class SimpleCNN(nn.Module):
         
         return x
 
+
+class BetterCNN(nn.Module):
+    """
+    SimpleCNN + Normalizations
+
+    Default Params: 275562
+    """
+    def __init__(self, dropout_proba=0.1):
+        super(BetterCNN, self).__init__()
+        self.conv1 = nn.Conv2d(1, 4, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(4, 16, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(16, 64, kernel_size=3, padding=1)
+        
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool_pad = nn.MaxPool2d(kernel_size=2, stride=2, padding=1)
+        
+        self.fc1 = nn.Linear(4*4*64, 256)
+        self.fc2 = nn.Linear(256, 10)
+        
+        self.dropout = nn.Dropout(p=dropout_proba)
+
+        self.norm2d_1 = nn.BatchNorm2d(4)
+        self.norm2d_2 = nn.BatchNorm2d(16)
+        self.norm2d_3 = nn.BatchNorm2d(64)
+
+        self.norm1d_1 = nn.BatchNorm1d(256)
+        
+    def forward(self, x):
+        x = x.reshape((x.shape[0], x.shape[-1], x.shape[1], x.shape[2])) # > BSx1x28x28 
+        
+        x = self.pool(F.relu(self.norm2d_1(self.conv1(x)))) # > 4x14x14
+        x = self.pool(F.relu(self.norm2d_2(self.conv2(x)))) # > 16x7x7
+        x = self.pool_pad(F.relu(self.norm2d_3(self.conv3(x))))  # > 64x4x4
+        
+        # Reshape & FCs
+        x = x.view(-1, 4*4*64)
+        x = self.dropout(x)
+        x = F.relu(self.norm1d_1(self.fc1(x)))
+        x = self.dropout(x)
+        x = self.fc2(x)
+        
+        return x
+
 ### Simple Vision Transformer ###
 
 class SelfAttention(nn.Module):
