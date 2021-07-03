@@ -12,3 +12,10 @@
 
 重现pdf中的表, 如果不用GPU，VIT模型比较慢：
 `bash table.sh`
+
+成绩
+94/100
+
+比赛
+https://www.kaggle.com/c/digit-recognizer-2021-spring/leaderboard
+
