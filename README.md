@@ -18,4 +18,5 @@ mv data/train/mnist_train.csv data/train.csv
 
 重现pdf中的表, 如果不用GPU，VIT模型比较慢：
 `bash table.sh`
+也可以参考log.txt的文件。
 
