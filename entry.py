@@ -169,7 +169,7 @@ def train_val(train_dataloader, val_dataloader, args):
 
 def predict(test_dataloader, args):
     """
-    Perform training & validation
+    Perform testing
     """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -177,26 +177,22 @@ def predict(test_dataloader, args):
     model.load_state_dict(torch.load(os.path.join(args.out, 'model_{}.pt'.format(args.exp))))
     model = model.to(device)
 
+    test_correct = []
+    # Deactivate Dropout & Co
     model.eval()
-    preds = []
-
-    # Iterate over test data
-    with torch.no_grad():
-        for data, _ in test_dataloader:
+    for data, target in test_dataloader:
+        # Deactivate autograd
+        with torch.no_grad():
             # Move tensors to correct device (GPU if Cuda available)
-            data = data.to(device)
+            data, target = data.to(device), target.to(device)
             # Forward pass: compute predicted outputs by passing inputs to the model
             output = model(data)
-            # Convert output probabilities to predicted class
+            # Update correct
             _, pred = torch.max(output, 1)
-            # Add to preds
-            preds.extend(pred.cpu().tolist())
-
-    sample_sub = pd.read_csv(args.sample_sub)
-    sample_sub["Label"] = preds
-    print("Submission Head:\n", sample_sub.head(5))
-    sample_sub.to_csv(os.path.join(args.out, args.exp + ".csv"), index=False)
-
+            test_correct.extend((target.squeeze() == pred).tolist())
+    test_acc = sum(test_correct) / len(test_correct)
+    print('Final Test Accuracy of Best Epoch: {:.6f}'.format(test_acc))
+        
 def main(args):
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
