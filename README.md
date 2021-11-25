@@ -6,10 +6,10 @@
 解压数据：
 （数据是本来的MNST数据集：https://www.kaggle.com/oddrationale/mnist-in-csv）
 ```
-unzip /content/mnist_test.csv.zip -d ./MNIST-algorithms/data/test/
-unzip /content/mnist_train.csv.zip -d ./MNIST-algorithms/data/train/
-mv ./MNIST-algorithms/data/test/mnist_test.csv ./MNIST-algorithms/data/test.csv
-mv ./MNIST-algorithms/data/train/mnist_train.csv ./MNIST-algorithms/data/train.csv
+unzip data/mnist_test.csv.zip -d data/test/
+unzip data/mnist_train.csv.zip -d data/train/
+mv data/test/mnist_test.csv data/test.csv
+mv data/train/mnist_train.csv data/train.csv
 ```
 
 训练，验证和测试 - 比如：

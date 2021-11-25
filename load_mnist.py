@@ -46,7 +46,6 @@ def get_dataloader(args):
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
 
     df_test = pd.read_csv(args.test)
-    df_test["label"] = 0 # Create dummy labels, which won't be used
     test_dataset = MNISTDataset(df_test)
     test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
